@@ -21,7 +21,7 @@ let activators = [sin]
 
 let activator_options = {
   clamp, sigmoid, fold, sin,
-  tan, fold3, split, fold2,
+  tan, fold3, splitHalf, splitThird, fold2,
   tanh, wrap,
 }
 
@@ -96,7 +96,8 @@ function fold3(n) {
 function sin(n) { return 0.5*(Math.sin(Math.PI*(n-0.5))+1); }
 function tan(n) { return 0.5*(Math.tan(n*0.9)+1); }
 function tanh(n) { return Math.tanh((n+2) % 2); }
-function split(n) { return n < 0 ? 0 : 1; }
+function splitHalf(n) { return n < 0 ? 0 : 1; }
+function splitThird(n) { return n < -1/3 ? 0 : (n < 1/3 ? 0.5 : 1); }
 
 function compute(...inputs) {
   for (let i in inputs)
