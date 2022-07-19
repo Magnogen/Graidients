@@ -1,9 +1,10 @@
 // jshint esversion: 10
 const $ = query => document.querySelector(query);
+const $$ = query => document.querySelectorAll(query);
 
 const c = $('canvas#render');
 const ctx = c.getContext('2d');
-c.width = c.height = 512;
+c.width = c.height = 256;
 
 let network = [];
 
@@ -16,31 +17,42 @@ class Node {
   }
 }
 
-let activators = [
-  // clampers
-    // clamp,
-    // sigmoid,
-  // oscillators
-    // fold,
-    sin,
-    // sinsq,
-  // weirds
-    // tan,
-    // fold3,
-  // boundaries
-    // split,
-  // oscillating boundaries
-    // fold2,
-    // tanh,
-    // wrap,
-]
+let activators = [sin]
 
-init(2, 4, 4, 4, 4, 5)
+let activator_options = {
+  clamp, sigmoid, fold, sin,
+  tan, fold3, split, fold2,
+  tanh, wrap,
+}
 
-let scale = 2
-let domain_warp = false
+c.addEventListener('click', e => {
+  if (activators.length == 0) return;
+  init(2, 4, 4, 4, 4, 5);
+})
+addEventListener('keydown', e => e.key=='Enter' && c.dispatchEvent(new Event("click")))
+c.dispatchEvent(new Event("click"))
+$$('span[option]').forEach(el => {
+  el.addEventListener('click', e => {
+    if (activators.includes(activator_options[el.id]))
+      activators.splice(activators.indexOf(activator_options[el.id]), 1);
+    else activators.push(activator_options[el.id]);
+    el.classList.toggle('active');
+  })
+});
+$$('span[boolean]').forEach(el => {
+  el.addEventListener('click', e => {
+    settings[el.id] = !settings[el.id];
+    el.classList.toggle('active');
+  })
+});
+
+let settings = {
+  scale: 3,
+  domain_warping: false
+};
 
 function init(...Ls) {
+  network = []
   let layers = [...Ls, []];
   for (let l = 0; l < layers.length-1; l++) {
     let layer = [];
@@ -115,15 +127,15 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
   let d = Math.random() < 0.5 ? 1 : -1;
   do {
     for (let {x, y} of coords) {
-      let X = scale*(x/(c.width-1)-0.5)
-      let Y = scale*(y/(c.height-1)-0.5)
+      let X = settings.scale*(x/(c.width-1)-0.5)
+      let Y = settings.scale*(y/(c.height-1)-0.5)
       const t = performance.now()/6000;
       const rand = Math.random() * 0;
       let I = 4*(x + y*c.width);
       let col = compute(X, Y);
-      if (domain_warp) {
-        X += col[3];
-        Y += col[4];
+      if (settings.domain_warp) {
+        X += 4*col[3];
+        Y += 4*col[4];
         col = compute(X, Y);
       }
       const r = col[0];
@@ -133,7 +145,7 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
       pixels.data[I + 1] = g * 255;
       pixels.data[I + 2] = b * 255;
       pixels.data[I + 3] = 255;
-      if (performance.now() - last > 1000/30) {
+      if (performance.now() - last > 1000/60) {
         ctx.putImageData(pixels, 0, 0);
         await new Promise(requestAnimationFrame);
         last = performance.now();
@@ -152,7 +164,7 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
     
     // ctx.putImageData(pixels, 0, 0);
     // await new Promise(requestAnimationFrame);
-  } while (false)
+  } while (true)
   ctx.putImageData(pixels, 0, 0);
 } )()
 

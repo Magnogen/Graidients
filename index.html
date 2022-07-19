@@ -6,18 +6,79 @@
 
   </head>
   <body>
-<!--     <aside>
-      Network<br>
-      <br>
-      <canvas id="network"></canvas>
-    </aside> -->
+    <aside>
+      <div>
+        <span boolean id="domain_warping" class="">Domain Warping</span>
+      </div>
+      <div>
+        <h4>Activator Functions</h4>
+        Clampers
+        <span option id="clamp" class="">Clamp</span>
+        <span option id="sigmoid" class="">Sigmoid</span>
+        Oscillators
+        <span option id="fold" class="">Fold</span>
+        <span option id="sin" class="active">Sine</span>
+        Weirds
+        <span option id="tan" class="">Tan</span>
+        <span option id="fold3" class="">Fold3</span>
+        Boundaries
+        <span option id="split" class="">Split</span>
+        Oscillating boundaries
+        <span option id="fold2" class="">Fold2</span>
+        <span option id="tanh" class="">Tanh</span>
+        <span option id="wrap" class="">Wrap</span>
+      </div>
+      
+    </aside>
     
-    <div main>
+    <main>
       <div render>
         <canvas id="render"></canvas>
-        <button class="underline no-highlight">Render</button>
+        <button class="underline">Save</button>
       </div>
-    </div>
+    </main>
+    <script src="drawer.js"></script>
+  </body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="utf-8" />
+
+  </head>
+  <body>
+    <aside>
+      <div>
+        <span boolean id="domain_warping" class="">Domain Warping</span>
+      </div>
+      <div>
+        <h4>Activator Functions</h4>
+        Clampers
+        <span option id="clamp" class="">Clamp</span>
+        <span option id="sigmoid" class="">Sigmoid</span>
+        Oscillators
+        <span option id="fold" class="">Fold</span>
+        <span option id="sin" class="active">Sine</span>
+        Weirds
+        <span option id="tan" class="">Tan</span>
+        <span option id="fold3" class="">Fold3</span>
+        Boundaries
+        <span option id="split" class="">Split</span>
+        Oscillating boundaries
+        <span option id="fold2" class="">Fold2</span>
+        <span option id="tanh" class="">Tanh</span>
+        <span option id="wrap" class="">Wrap</span>
+      </div>
+      
+    </aside>
+    
+    <main>
+      <div render>
+        <canvas id="render"></canvas>
+        <button class="underline">Save</button>
+      </div>
+    </main>
     <script src="drawer.js"></script>
   </body>
 </html>
