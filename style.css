@@ -16,6 +16,12 @@ body {
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 
+@media (max-width:100vh) {
+  body {
+    flex-direction: column-reverse;
+  }
+}
+
 .underline, .hover-underline:hover {
   /* Underline styles - details of technique here:
    * https://nickymeuleman.netlify.app/blog/css-animated-wrapping-underline
@@ -32,6 +38,7 @@ aside {
   background-color: #323232;
   padding: 0.5em 1em;
   flex-grow: 2;
+  overflow: auto;
 } aside > div {
   padding: 1em 1em;
   margin: 1em 0;
