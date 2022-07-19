@@ -13,7 +13,9 @@ Different kinds of Networks produce different aesthetics.
 
 ### Plans for the future
 Mostly UI stuff, you don't have any control over things otherwise.
-- [ ] A way to redraw the image (click it? a keybind?)
+- [x] A way to redraw the image (click it? a keybind?) 
+  
+  Click the image, or press the `Enter` Key
 - [ ] Network customisation
   - [ ] Number of hidden layers, and nodes per layer should be changable
   - [ ] A way to change the inputs, like adding a Random value for a dithery effect
