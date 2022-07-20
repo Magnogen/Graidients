@@ -21,7 +21,7 @@ let activators = [sin]
 
 let activator_options = {
   clamp, sigmoid, fold, sin,
-  tan, fold3, splitHalf, splitThird, fold2,
+  tan, invSin, fold3, splitHalf, splitThird, fold2,
   tanh, wrap,
 }
 
@@ -52,7 +52,7 @@ let settings = {
 };
 
 function init(...Ls) {
-  network = []
+  network = [];
   let layers = [...Ls, []];
   for (let l = 0; l < layers.length-1; l++) {
     let layer = [];
@@ -95,9 +95,10 @@ function fold3(n) {
 
 function sin(n) { return 0.5*(Math.sin(Math.PI*(n-0.5))+1); }
 function tan(n) { return 0.5*(Math.tan(n*0.9)+1); }
+function invSin(n) { return 1/sin(n); }
 function tanh(n) { return Math.tanh((n+2) % 2); }
 function splitHalf(n) { return n < 0 ? 0 : 1; }
-function splitThird(n) { return n < -1/3 ? 0 : (n < 1/3 ? 0.5 : 1); }
+function splitThird(n) { return n < -1 ? 0 : (n > 1 ? 1 : 0.5); }
 
 function compute(...inputs) {
   for (let i in inputs)
