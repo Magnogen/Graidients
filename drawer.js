@@ -95,7 +95,7 @@ function fold3(n) {
 
 function sin(n) { return 0.5*(Math.sin(Math.PI*(n-0.5))+1); }
 function tan(n) { return 0.5*(Math.tan(n*0.9)+1); }
-function invSin(n) { return 1/sin(n); }
+function invSin(n) { const s = 1/sin(n); return s - (s<0 ? -1 : 1); }
 function tanh(n) { return Math.tanh((n+2) % 2); }
 function splitHalf(n) { return n < 0 ? 0 : 1; }
 function splitThird(n) { return n < -1 ? 0 : (n > 1 ? 1 : 0.5); }
