@@ -21,8 +21,8 @@ let activators = [sin]
 
 let activator_options = {
   clamp, sigmoid, fold, sin,
-  tan, invSin, fold3, splitHalf, splitThird, fold2,
-  tanh, wrap,
+  tan, invSin, tanhFold, splitHalf, steps, fold2,
+  tanh, wrap
 }
 
 c.addEventListener('click', e => {
@@ -75,32 +75,31 @@ function wrap(x) {
 }
 
 function fold(n) {
-  let N = ((n+2))%2;
+  let N = (n<0 ? -n : n)%2;
   if (N > 1) return 2 - N;
   return N;
 }
 function fold2(n) {
   let N = n;
-  if (N < 0)
-    while (N < -1) N += 2;
-  else
-    while (N > 1) N -= 2;
+  while (N < -1) N += 2;
+  while (N > 1) N -= 2;
   return Math.tanh(N);
 }
-function fold3(n) {
-  let N = (n+2)%2;
-  if (N > 1) return Math.tanh(2 - N);
-  return Math.tanh(N);
+function tanhFold(n) {
+  let N = (n<0 ? -n : n)%2;
+  if (N > 1) return Math.pow(Math.tanh(2 - N), 2/3);
+  return Math.pow(Math.tanh(N), 2/3);
 }
 
 function sin(n) { return 0.5*(Math.sin(Math.PI*(n-0.5))+1); }
 function tan(n) { return 0.5*(Math.tan(n*0.9)+1); }
-function invSin(n) { const s = 1/sin(n); return s - (s<0 ? -1 : 1); }
+function invSin(n) { return 1/Math.pow(sin(n), 0.2) - 1; }
 function tanh(n) { return Math.tanh((n+2) % 2); }
 function splitHalf(n) { return n < 0 ? 0 : 1; }
-function splitThird(n) { return n < -1 ? 0 : (n > 1 ? 1 : 0.5); }
+function steps(n) { return (0|(8*n))/7; }
 
 function compute(...inputs) {
+  // network[0][0].value = inputs[0];
   for (let i in inputs)
     network[0][i].value = inputs[i];
   for (let l = 1; l < network.length; l++)
@@ -169,7 +168,6 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
   } while (true)
   ctx.putImageData(pixels, 0, 0);
 } )()
-
 
 
 

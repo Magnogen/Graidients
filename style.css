@@ -4,7 +4,7 @@ body {
   display: flex;
   width: 100vw;
   height: 100vh;
-  background: #161616;
+  background: #161816;
   color: #fff;
   /* and so the pain begins */
   -webkit-touch-callout: none; /* iOS Safari */
@@ -26,7 +26,7 @@ body {
   /* Underline styles - details of technique here:
    * https://nickymeuleman.netlify.app/blog/css-animated-wrapping-underline
    */
-  background: linear-gradient(to right, #004cff, #004cff);
+  background: linear-gradient(to right, #80f080, #80f080);
   background-size: 100% 1px;
   background-position: 0% 100%;
   background-repeat: no-repeat;
@@ -35,7 +35,7 @@ body {
 
 aside {
   max-width: 48em;
-  background-color: #323232;
+  background-color: #323632;
   padding: 0.5em 1em;
   flex-grow: 2;
   overflow: auto;
@@ -43,7 +43,7 @@ aside {
   padding: 1em 1em;
   margin: 1em 0;
   border-radius: 1rem;
-  background-color: #282828;
+  background-color: #282c28;
 } aside > div > h4 {
   position: relative;
   top: -0.25em;
@@ -57,15 +57,15 @@ aside {
   padding: 0 0.4em;
   cursor: pointer;
 }
-aside > div > span[option] { color: #808080; }
+aside > div > span[option] { color: #fff4; }
 aside > div > span[option]:hover { font-style: italic; }
-aside > div > span[option].active { color: #fff; }
-aside > div > span[option]:before { content: '// '; color: #808080; }
+aside > div > span[option].active { color: #80f080 }
+aside > div > span[option]:before { content: '// '; color: #fff4; }
 aside > div > span[option].active:before { content: ''; }
 
 aside > div > span[boolean]:hover { font-style: italic; }
-aside > div > span[boolean].active { color: #fff; color: #80f080 }
-aside > div > span[boolean]:after { content: ' = false'; color: #808080 }
+aside > div > span[boolean].active { color: #80f080 }
+aside > div > span[boolean]:after { content: ' = false'; color: #fff4; }
 aside > div > span[boolean].active:after { content: ' = true';  }
 
 main {
