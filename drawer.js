@@ -134,9 +134,9 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
       const rand = Math.random() * 0;
       let I = 4*(x + y*c.width);
       let col = compute(X, Y);
-      if (settings.domain_warp) {
-        X += 4*col[3];
-        Y += 4*col[4];
+      if (settings.domain_warping) {
+        X += 1*col[3];
+        Y += 1*col[4];
         col = compute(X, Y);
       }
       const r = col[0];
