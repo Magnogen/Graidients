@@ -63,8 +63,8 @@ $$('span[input="boolean"]').forEach(el => {
 $$('span[input="number"]').forEach(el => {
   let mm = document.createElement('span');
   let pp = document.createElement('span');
-  mm.innerHTML = '-- ';
-  pp.innerHTML = ' ++';
+  mm.innerHTML = ' -- ';
+  pp.innerHTML = ' ++ ';
   pp.on('click', e => settings[el.id]+=0.5);
   mm.on('click', e => settings[el.id]-=0.5);
   el.insertAdjacentElement('afterbegin', mm);
