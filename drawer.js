@@ -1,6 +1,9 @@
 // jshint esversion: 10
 const $ = query => document.querySelector(query);
 const $$ = query => document.querySelectorAll(query);
+EventTarget.prototype.on = function (...args) { return this.addEventListener(...args) };
+EventTarget.prototype.trigger = function (event) { return this.dispatchEvent(new Event(event)) };
+
 
 const c = $('canvas#render');
 const ctx = c.getContext('2d');
@@ -25,31 +28,48 @@ let activator_options = {
   tanh, wrap
 }
 
-c.addEventListener('click', e => {
+let settings = {
+  scale: 3,
+  domain_warping: false,
+  warping_amount: 2
+};
+
+c.on('click', e => {
   if (activators.length == 0) return;
   init(2, 4, 4, 4, 4, 5);
-})
-addEventListener('keydown', e => e.key=='Enter' && c.dispatchEvent(new Event("click")))
-c.dispatchEvent(new Event("click"))
-$$('span[option]').forEach(el => {
-  el.addEventListener('click', e => {
+});
+on('keydown', e => e.key=='Enter' && c.trigger('click'));
+c.trigger('click');
+$$('span[input="option"]').forEach(el => {
+  el.on('click', e => {
     if (activators.includes(activator_options[el.id]))
       activators.splice(activators.indexOf(activator_options[el.id]), 1);
     else activators.push(activator_options[el.id]);
     el.classList.toggle('active');
   })
 });
-$$('span[boolean]').forEach(el => {
-  el.addEventListener('click', e => {
+$$('span[input="boolean"]').forEach(el => {
+  el.on('click', e => {
     settings[el.id] = !settings[el.id];
     el.classList.toggle('active');
-  })
+    $$('[need]').forEach(n => {
+      if (n.getAttribute('need') != el.id) return;
+      if (!settings[el.id]) n.setAttribute('sad', '');
+      else n.removeAttribute('sad');
+    });
+  });
 });
 
-let settings = {
-  scale: 3,
-  domain_warping: false
-};
+$$('span[input="number"]').forEach(el => {
+  let mm = document.createElement('span');
+  let pp = document.createElement('span');
+  mm.innerHTML = '-- ';
+  pp.innerHTML = ' ++';
+  pp.on('click', e => settings[el.id]+=0.5);
+  mm.on('click', e => settings[el.id]-=0.5);
+  el.insertAdjacentElement('afterbegin', mm);
+  el.insertAdjacentElement('beforeend', pp);
+});
 
 function init(...Ls) {
   network = [];
@@ -135,8 +155,8 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
       let I = 4*(x + y*c.width);
       let col = compute(X, Y);
       if (settings.domain_warping) {
-        X += 1*col[3];
-        Y += 1*col[4];
+        X += settings.warping_amount*col[3];
+        Y += settings.warping_amount*col[4];
         col = compute(X, Y);
       }
       const r = col[0];
@@ -168,7 +188,6 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
   } while (true)
   ctx.putImageData(pixels, 0, 0);
 } )()
-
 
 
 

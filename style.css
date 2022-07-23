@@ -39,6 +39,8 @@ aside {
   padding: 0.5em 1em;
   flex-grow: 2;
   overflow: auto;
+  font-family: monospace;
+  font-size: 1.15em;
 } aside > div {
   padding: 1em 1em;
   margin: 1em 0;
@@ -57,16 +59,25 @@ aside {
   padding: 0 0.4em;
   cursor: pointer;
 }
-aside > div > span[option] { color: #fff4; }
-aside > div > span[option]:hover { font-style: italic; }
-aside > div > span[option].active { color: #80f080 }
-aside > div > span[option]:before { content: '// '; color: #fff4; }
-aside > div > span[option].active:before { content: ''; }
 
-aside > div > span[boolean]:hover { font-style: italic; }
-aside > div > span[boolean].active { color: #80f080 }
-aside > div > span[boolean]:after { content: ' = false'; color: #fff4; }
-aside > div > span[boolean].active:after { content: ' = true';  }
+:not([need][sad])[input="option"]               { color: #fff4; }
+:not([need][sad])[input="option"]:before        { content: '// '; }
+:not([need][sad])[input="option"].active        { color: #80f080; }
+:not([need][sad])[input="option"].active:before { content: ''; }
+:not([need][sad])[input="option"]:hover         { font-style: italic; }
+
+:not([need][sad])[input="boolean"]              { color: #fff; }
+:not([need][sad])[input="boolean"]:after        { content: ' = false'; color: #fff4; }
+:not([need][sad])[input="boolean"].active       { color: #80f080; }
+:not([need][sad])[input="boolean"].active:after { content: ' = true'; }
+:not([need][sad])[input="boolean"]:hover        { font-style: italic; }
+
+:not([need][sad])[input="number"]               { color: #fff; }
+:not([need][sad])[input="number"]:hover         { cursor: default; }
+:not([need][sad])[input="number"] span          { color: #80f080; cursor: pointer; }
+
+[need][sad] { color: #fff4; cursor: initial; }
+[need][sad]:before { content: '// '; }
 
 main {
   display: flex;
