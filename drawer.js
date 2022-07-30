@@ -34,6 +34,12 @@ let settings = {
   warping_amount: 2
 };
 
+let refresh_size = true;
+function resize(size) {
+  c.width = c.height = size;
+  refresh_size = true;
+}
+
 c.on('click', e => {
   if (activators.length == 0) return;
   init(2, 4, 4, 4, 4, 5);
@@ -138,15 +144,19 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
 
 ( async () => {
   let last = 0;
-  let pixels = ctx.getImageData(0, 0, c.width, c.height);
-  let coords = [...Array(c.width * c.height)].map((e, i) => ({ x: i%c.width, y: 0|(i/c.width) }))
+  let pixels, coords;
   
-  shuffle(coords)
   let i = 0|(Math.random()*network.length);
   let j = 0|(Math.random()*network[i].length);
   let k = 0|(Math.random()*network[i][j].weights.length);
   let d = Math.random() < 0.5 ? 1 : -1;
   do {
+    if (refresh_size) {
+      pixels = ctx.getImageData(0, 0, c.width, c.height);
+      coords = [...Array(c.width * c.height)].map((e, i) => ({ x: i%c.width, y: 0|(i/c.width) }));
+      shuffle(coords);
+      refresh_size = false;
+    }
     for (let {x, y} of coords) {
       let X = settings.scale*(x/(c.width-1)-0.5)
       let Y = settings.scale*(y/(c.height-1)-0.5)
