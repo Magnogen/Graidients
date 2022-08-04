@@ -75,6 +75,7 @@ aside {
 :not([need][sad])[input="number"]               { color: #fff; }
 :not([need][sad])[input="number"]:hover         { cursor: default; }
 :not([need][sad])[input="number"] span          { color: #80f080; cursor: pointer; }
+:not([need][sad])[input="number"] .reader       { color: #fff4; cursor: initial; }
 
 [need][sad] { color: #fff4; cursor: initial; }
 [need][sad]:before { content: '// '; }

@@ -65,16 +65,27 @@ $$('span[input="boolean"]').forEach(el => {
     });
   });
 });
-
 $$('span[input="number"]').forEach(el => {
-  let mm = document.createElement('span');
+  let reader = document.createElement('span');
+  reader.innerHTML = ' // 2.0';
+  reader.classList.add('reader')
   let pp = document.createElement('span');
-  mm.innerHTML = ' -- ';
-  pp.innerHTML = ' ++ ';
-  pp.on('click', e => settings[el.id]+=0.5);
-  mm.on('click', e => settings[el.id]-=0.5);
-  el.insertAdjacentElement('afterbegin', mm);
+  pp.innerHTML = ' ++';
+  pp.on('click', e => {
+    if (!settings[el.getAttribute('need')]) return;
+    settings[el.id] += 0.5;
+    reader.innerHTML = ` // ${settings[el.id].toFixed(1)}`;
+  });
   el.insertAdjacentElement('beforeend', pp);
+  el.insertAdjacentElement('beforeend', reader);
+  let mm = document.createElement('span');
+  mm.innerHTML = '-- ';
+  mm.on('click', e => {
+    if (!settings[el.getAttribute('need')]) return;
+    settings[el.id] -= 0.5;
+    reader.innerHTML = ` // ${settings[el.id].toFixed(1)}`;
+  });
+  el.insertAdjacentElement('afterbegin', mm);
 });
 
 function init(...Ls) {
@@ -158,6 +169,7 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
       refresh_size = false;
     }
     for (let {x, y} of coords) {
+      if (refresh_size) break;
       let X = settings.scale*(x/(c.width-1)-0.5)
       let Y = settings.scale*(y/(c.height-1)-0.5)
       const t = performance.now()/6000;
