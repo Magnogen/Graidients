@@ -78,7 +78,7 @@ $$('span[input="number"]').forEach(el => {
   pp.on('click', e => {
     if (!settings[el.getAttribute('need')]) return;
     settings[el.id] += 0.5;
-    reader.innerHTML = ` // ${settings[el.id].toFixed(1)}`;
+    reader.innerHTML = ` = ${settings[el.id].toFixed(1)}`;
   });
   el.insertAdjacentElement('beforeend', pp);
   el.insertAdjacentElement('beforeend', reader);
@@ -87,7 +87,7 @@ $$('span[input="number"]').forEach(el => {
   mm.on('click', e => {
     if (!settings[el.getAttribute('need')]) return;
     settings[el.id] -= 0.5;
-    reader.innerHTML = ` // ${settings[el.id].toFixed(1)}`;
+    reader.innerHTML = ` = ${settings[el.id].toFixed(1)}`;
   });
   el.insertAdjacentElement('afterbegin', mm);
 });
