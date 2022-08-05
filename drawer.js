@@ -49,6 +49,7 @@ c.on('click', e => {
 });
 on('keydown', e => e.key=='Enter' && c.trigger('click'));
 c.trigger('click');
+
 $$('span[input="option"]').forEach(el => {
   el.on('click', e => {
     if (activators.includes(activator_options[el.id]))
@@ -70,7 +71,7 @@ $$('span[input="boolean"]').forEach(el => {
 });
 $$('span[input="number"]').forEach(el => {
   let reader = document.createElement('span');
-  reader.innerHTML = ' // 2.0';
+  reader.innerHTML = ' = 2.0';
   reader.classList.add('reader')
   let pp = document.createElement('span');
   pp.innerHTML = ' ++';
