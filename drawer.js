@@ -25,11 +25,12 @@ let activators = [sin]
 let activator_options = {
   clamp, sigmoid, fold, sin,
   tan, invSin, valleys, splitHalf, steps,
-  tanh, wrap, value_noise
+  tanh, wrap, value_noise,
+  fractal_sin, fractal_fold, fractal_value_noise
 }
 
 let settings = {
-  scale: 10,
+  scale: 3,
   domain_warping: false,
   warping_amount: 2,
   noise_seed: Math.random()
@@ -124,14 +125,31 @@ function valleys(n) {
   N = (n<0 ? -n : n);
   return Math.pow(N, 1/2);
 }
+
 function value_noise(n) {
-  let N = n - Math.floor(n);
-  let x1 = Math.sin(100*settings.noise_seed + Math.floor(n)) * 43758.5453123;
+  let scale = 2.5;
+  let N = scale*n - Math.floor(scale*n);
+  let x1 = Math.sin(100*settings.noise_seed + Math.floor(scale*n)) * 43758.5453123;
   x1 = x1 - Math.floor(x1);
-  let x2 = Math.sin(100*settings.noise_seed + Math.floor(n+1)) * 43758.5453123;
+  let x2 = Math.sin(100*settings.noise_seed + Math.floor(scale*n+1)) * 43758.5453123;
   x2 = x2 - Math.floor(x2);
   return x1*(1-N) + x2*(N);
 }
+function fractal_func(func) {
+  return function(n) {
+    let sum = 0, a = 0.5;
+    let falloff = 2.5;
+    for (let i = 0; i <= 6; i++) {
+      let p = Math.pow(falloff, i);
+      sum += func(p * n) / p;
+      a += 1 / p;
+    }
+    return 1.2 * sum / a;
+  }
+}
+function fractal_sin(n) { return fractal_func(sin)(n) }
+function fractal_fold(n) { return fractal_func(fold)(n) }
+function fractal_value_noise(n) { return fractal_func(value_noise)(n) }
 
 function sin(n) { return 0.5*(Math.sin(Math.PI*(n-0.5))+1); }
 function tan(n) { return 0.5*(Math.tan(n*0.9)+1); }
