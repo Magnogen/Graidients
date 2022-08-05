@@ -124,7 +124,7 @@ function valleys(n) {
   while (N < -1) N += 2;
   while (N > 1) N -= 2;
   N = (n<0 ? -n : n);
-  return Math.pow(N, 1/2);
+  return Math.pow(N, 2/3);
 }
 
 function value_noise(n) {
