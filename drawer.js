@@ -24,14 +24,15 @@ let activators = [sin]
 
 let activator_options = {
   clamp, sigmoid, fold, sin,
-  tan, invSin, tanhFold, splitHalf, steps, fold2,
-  tanh, wrap
+  tan, invSin, valleys, splitHalf, steps,
+  tanh, wrap, value_noise
 }
 
 let settings = {
-  scale: 3,
+  scale: 10,
   domain_warping: false,
-  warping_amount: 2
+  warping_amount: 2,
+  noise_seed: Math.random()
 };
 
 let refresh_size = true;
@@ -42,6 +43,7 @@ function resize(size) {
 
 c.on('click', e => {
   if (activators.length == 0) return;
+  settings.noise_seed = Math.random();
   init(2, 4, 4, 4, 4, 5);
 });
 on('keydown', e => e.key=='Enter' && c.trigger('click'));
@@ -110,22 +112,25 @@ function wrap(x) {
   while (X > 1) X--;
   return X;
 }
-
 function fold(n) {
   let N = (n<0 ? -n : n)%2;
   if (N > 1) return 2 - N;
   return N;
 }
-function fold2(n) {
-  let N = n;
+function valleys(n) {
+  let N = n+1;
   while (N < -1) N += 2;
   while (N > 1) N -= 2;
-  return Math.tanh(N);
+  N = (n<0 ? -n : n);
+  return Math.pow(N, 1/2);
 }
-function tanhFold(n) {
-  let N = (n<0 ? -n : n)%2;
-  if (N > 1) return Math.pow(Math.tanh(2 - N), 2/3);
-  return Math.pow(Math.tanh(N), 2/3);
+function value_noise(n) {
+  let N = n - Math.floor(n);
+  let x1 = Math.sin(100*settings.noise_seed + Math.floor(n)) * 43758.5453123;
+  x1 = x1 - Math.floor(x1);
+  let x2 = Math.sin(100*settings.noise_seed + Math.floor(n+1)) * 43758.5453123;
+  x2 = x2 - Math.floor(x2);
+  return x1*(1-N) + x2*(N);
 }
 
 function sin(n) { return 0.5*(Math.sin(Math.PI*(n-0.5))+1); }
