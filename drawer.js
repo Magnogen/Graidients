@@ -150,14 +150,14 @@ function fractal_func(func) {
   const falloff = 2;
   const shift = 100;
   const octaves = 5;
-  ifalloff = 1/falloff;
   return function(n) {
     let value = 0;
+    let amplitude = 1/falloff;
     let x = n;
     for (let i = 0; i < iters; ++i) {
-      value += ifalloff * func(x);
+      value += amplitude * func(x);
       x = falloff * x + shift;
-      ifalloff /= falloff;
+      amplitude /= falloff;
     }
     return value;
   }
