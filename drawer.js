@@ -147,15 +147,19 @@ function value_noise(n) {
   return x1*(1-N) + x2*(N);
 }
 function fractal_func(func) {
+  const falloff = 2;
+  const shift = 100;
+  const octaves = 5;
+  ifalloff = 1/falloff;
   return function(n) {
-    let sum = 0, a = 0.5;
-    let falloff = 2.5;
-    for (let i = 0; i <= 6; i++) {
-      let p = Math.pow(falloff, i);
-      sum += func(p * n) / p;
-      a += 1 / p;
+    let value = 0;
+    let x = n;
+    for (let i = 0; i < iters; ++i) {
+      value += ifalloff * func(x);
+      x = falloff * x + shift;
+      ifalloff /= falloff;
     }
-    return 1.2 * sum / a;
+    return value;
   }
 }
 function fractal_sin(n) { return fractal_func(sin)(n) }
