@@ -154,7 +154,7 @@ function fractal_func(func) {
     let value = 0;
     let amplitude = 1/falloff;
     let x = n;
-    for (let i = 0; i < iters; ++i) {
+    for (let i = 0; i < octaves; ++i) {
       value += amplitude * func(x);
       x = falloff * x + shift;
       amplitude /= falloff;
