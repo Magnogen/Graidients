@@ -11,6 +11,11 @@
   <body>
     <aside>
       <div>
+        <h4>General</h4>
+        <span input="number" id="scale" class="">Zoom Scale</span>
+        <span input="number" id="resolution" map="i => 2**i" crement="1" min="2" class="">Image Resolution</span>
+      </div>
+      <div>
         <h4>Domain Warping</h4>
         <span input="boolean" id="domain_warping" class="">Enabled</span>
         <span input="number" sad need="domain_warping" id="warping_amount" class="">Amount</span>

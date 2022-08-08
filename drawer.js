@@ -1,4 +1,4 @@
-// jshint esversion: 10
+// jshint esversion: 11
 const $ = query => document.querySelector(query);
 const $$ = query => document.querySelectorAll(query);
 EventTarget.prototype.on = function (...args) { return this.addEventListener(...args) };
@@ -31,6 +31,9 @@ let activator_options = {
 
 let settings = {
   scale: 3,
+  res: 8,
+  get resolution() { return this.res },
+  set resolution(v) { this.res = v; resize(2**v); return v },
   domain_warping: false,
   warping_amount: 2,
   noise_seed: Math.random()
@@ -64,31 +67,38 @@ $$('span[input="boolean"]').forEach(el => {
     el.classList.toggle('active');
     $$('[need]').forEach(n => {
       if (n.getAttribute('need') != el.id) return;
-      if (!settings[el.id]) n.setAttribute('sad', '');
+      if (!settings[el.id]) n.setAttribute('sad', 'sad');
       else n.removeAttribute('sad');
     });
   });
 });
 $$('span[input="number"]').forEach(el => {
+  const map = new Function('return ' + (el.getAttribute('map') ?? 'i => i'))();
+  const crement = +(el.getAttribute('crement') ?? 0.5);
+  const min = +(el.getAttribute('min') ?? -Infinity);
+  const max = +(el.getAttribute('max') ?? Infinity);
+                           
   let reader = document.createElement('span');
-  reader.innerHTML = ' = 2.0';
-  reader.classList.add('reader')
+  reader.innerHTML = ' = ' + map(settings[el.id]).toFixed(1);
+  reader.classList.add('reader');
   let pp = document.createElement('span');
   pp.innerHTML = ' ++';
   pp.on('click', e => {
-    if (!settings[el.getAttribute('need')]) return;
-    settings[el.id] += 0.5;
-    reader.innerHTML = ` = ${settings[el.id].toFixed(1)}`;
+    if (el.getAttribute('need') && !settings[el.getAttribute('need')]) return;
+    settings[el.id] += crement;
+    settings[el.id] = Math.min(max, settings[el.id]);
+    reader.innerHTML = ' = ' + map(settings[el.id]).toFixed(1);
   });
-  el.insertAdjacentElement('beforeend', pp);
-  el.insertAdjacentElement('beforeend', reader);
   let mm = document.createElement('span');
   mm.innerHTML = '-- ';
   mm.on('click', e => {
-    if (!settings[el.getAttribute('need')]) return;
-    settings[el.id] -= 0.5;
-    reader.innerHTML = ` = ${settings[el.id].toFixed(1)}`;
+    if (el.getAttribute('need') && !settings[el.getAttribute('need')]) return;
+    settings[el.id] -= crement;
+    settings[el.id] = Math.max(min, settings[el.id]);
+    reader.innerHTML = ' = ' + map(settings[el.id]).toFixed(1);
   });
+  el.insertAdjacentElement('beforeend', pp);
+  el.insertAdjacentElement('beforeend', reader);
   el.insertAdjacentElement('afterbegin', mm);
 });
 
