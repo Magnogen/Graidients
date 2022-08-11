@@ -36,19 +36,22 @@ let settings = {
   set resolution(v) { this.res = v; resize(2**v); return v },
   domain_warping: false,
   warping_amount: 2,
-  noise_seed: Math.random()
+  noise_seed: Math.random(),
+  grain: true,
+  chunk_size: 6
 };
 
-let refresh_size = true;
+let needs_refresh = true;
 function resize(size) {
   c.width = c.height = size;
-  refresh_size = true;
+  needs_refresh = true;
 }
 
 c.on('click', e => {
   if (activators.length == 0) return;
   settings.noise_seed = Math.random();
   init(2, 4, 4, 4, 4, 5);
+  needs_refresh = true;
 });
 on('keydown', e => e.key=='Enter' && c.trigger('click'));
 c.trigger('click');
@@ -59,9 +62,11 @@ $$('span[input="option"]').forEach(el => {
       activators.splice(activators.indexOf(activator_options[el.id]), 1);
     else activators.push(activator_options[el.id]);
     el.classList.toggle('active');
+    needs_refresh = true;
   })
 });
 $$('span[input="boolean"]').forEach(el => {
+  if (settings[el.id]) el.classList.add('active');
   el.on('click', e => {
     settings[el.id] = !settings[el.id];
     el.classList.toggle('active');
@@ -70,6 +75,7 @@ $$('span[input="boolean"]').forEach(el => {
       if (!settings[el.id]) n.setAttribute('sad', 'sad');
       else n.removeAttribute('sad');
     });
+    needs_refresh = true;
   });
 });
 $$('span[input="number"]').forEach(el => {
@@ -88,6 +94,7 @@ $$('span[input="number"]').forEach(el => {
     settings[el.id] += crement;
     settings[el.id] = Math.min(max, settings[el.id]);
     reader.innerHTML = ' = ' + map(settings[el.id]).toFixed(1);
+    needs_refresh = true;
   });
   let mm = document.createElement('span');
   mm.innerHTML = '-- ';
@@ -96,6 +103,7 @@ $$('span[input="number"]').forEach(el => {
     settings[el.id] -= crement;
     settings[el.id] = Math.max(min, settings[el.id]);
     reader.innerHTML = ' = ' + map(settings[el.id]).toFixed(1);
+    needs_refresh = true;
   });
   el.insertAdjacentElement('beforeend', pp);
   el.insertAdjacentElement('beforeend', reader);
@@ -174,7 +182,6 @@ function splitHalf(n) { return n < 0 ? 0 : 1; }
 function steps(n) { return (0|(8*n))/7; }
 
 function compute(...inputs) {
-  // network[0][0].value = inputs[0];
   for (let i in inputs)
     network[0][i].value = inputs[i];
   for (let l = 1; l < network.length; l++)
@@ -193,62 +200,57 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
 
 ( async () => {
   let last = 0;
-  let pixels, coords;
+  let pixels, pixelCoords;
+  let chunks, chunkCoords, chunk_size;
   
   let i = 0|(Math.random()*network.length);
   let j = 0|(Math.random()*network[i].length);
   let k = 0|(Math.random()*network[i][j].weights.length);
   let d = Math.random() < 0.5 ? 1 : -1;
   do {
-    if (refresh_size) {
-      pixels = ctx.getImageData(0, 0, c.width, c.height);
-      coords = [...Array(c.width * c.height)].map((e, i) => ({ x: i%c.width, y: 0|(i/c.width) }));
-      shuffle(coords);
-      refresh_size = false;
-    }
-    for (let {x, y} of coords) {
-      if (refresh_size) break;
-      let X = settings.scale*(x/(c.width-1)-0.5)
-      let Y = settings.scale*(y/(c.height-1)-0.5)
-      const t = performance.now()/6000;
-      const rand = Math.random() * 0;
-      let I = 4*(x + y*c.width);
-      let col = compute(X, Y);
-      if (settings.domain_warping) {
-        X += settings.warping_amount*col[3];
-        Y += settings.warping_amount*col[4];
-        col = compute(X, Y);
+    needs_refresh = false;
+    chunk_size = Math.min(c.width, 2**settings.chunk_size);
+    
+    chunkCoords = [...Array((c.width/chunk_size) ** 2)].map((e, i) => ({
+      chunkX: i%(c.width/chunk_size),
+      chunkY: 0|(i/(c.width/chunk_size))
+    }));
+    // shuffle(chunkCoords);
+    for (let { chunkX, chunkY } of chunkCoords) {
+      pixels = ctx.getImageData(chunkX*chunk_size, chunkY*chunk_size, chunk_size, chunk_size);
+      pixelCoords = [...Array(chunk_size ** 2)].map((e, i) => ({ x: i%chunk_size, y: 0|(i/chunk_size) }));
+      shuffle(pixelCoords);
+      for (let { x, y } of pixelCoords) {
+        let X = x + chunkX*chunk_size;
+        let Y = y + chunkY*chunk_size;
+        Y = settings.scale*(Y/(c.height-1) - 0.5);
+        X = settings.scale*(X/(c.width-1) - 0.5);
+        let I = 4*(x + y*chunk_size);
+        let col = compute(X, Y);
+        if (settings.domain_warping) {
+          X += settings.warping_amount*col[3];
+          Y += settings.warping_amount*col[4];
+          col = compute(X, Y);
+        }
+        const [r, g, b] = col;
+        pixels.data[I + 0] = r * 255;
+        pixels.data[I + 1] = g * 255;
+        pixels.data[I + 2] = b * 255;
+        pixels.data[I + 3] = 255;
+        if (settings.grain && performance.now() - last > 1000/70) {
+          ctx.putImageData(pixels, chunkX*chunk_size, chunkY*chunk_size);
+          await new Promise(requestAnimationFrame);
+          last = performance.now();
+        }
       }
-      const r = col[0];
-      const g = col[1];
-      const b = col[2];
-      pixels.data[I + 0] = r * 255;
-      pixels.data[I + 1] = g * 255;
-      pixels.data[I + 2] = b * 255;
-      pixels.data[I + 3] = 255;
-      if (performance.now() - last > 1000/60) {
-        ctx.putImageData(pixels, 0, 0);
-        await new Promise(requestAnimationFrame);
-        last = performance.now();
-      }
-      // network[i][j].weights[k] += d * 0.000002;
-      // if (Math.random() < 0.00001) {
-      //   i = 0|(Math.random()*network.length);
-      //   j = 0|(Math.random()*network[i].length);
-      //   k = 0|(Math.random()*network[i][j].weights.length);
-      //   d = Math.random() < 0.5 ? 1 : -1;
-      //   if (Math.random() < 0.75 || Math.abs(network[i][j].weights[k]) > 2) {
-      //     d = -Math.sign(network[i][j].weights[k])
-      //   }
-      // }
+      ctx.putImageData(pixels, chunkX*chunk_size, chunkY*chunk_size);
+      await new Promise(requestAnimationFrame);
     }
     
-    // ctx.putImageData(pixels, 0, 0);
-    // await new Promise(requestAnimationFrame);
-  } while (true)
-  ctx.putImageData(pixels, 0, 0);
+    while (!needs_refresh) await new Promise(requestAnimationFrame);
+    
+  } while (true);
 } )()
-
 
 
 
