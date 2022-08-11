@@ -158,7 +158,7 @@ function valleys(n) {
 }
 
 function value_noise(n) {
-  let scale = 2.5;
+  const scale = 2.5;
   let N = scale*n - Math.floor(scale*n);
   let x1 = Math.sin(100*settings.noise_seed + Math.floor(scale*n)) * 43758.5453123;
   x1 = x1 - Math.floor(x1);
@@ -168,7 +168,7 @@ function value_noise(n) {
 }
 function fractal_func(func) {
   const falloff = 2;
-  const shift = 100;
+  const shift = 437.585453123;
   const octaves = 5;
   return function(n) {
     let value = 0;
