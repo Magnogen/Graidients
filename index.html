@@ -14,6 +14,10 @@
         <h4>General</h4>
         <span input="number" id="scale" class="">Scale</span>
         <span input="number" id="resolution" map="i => 2**i" crement="1" min="2" class="">Image Resolution</span>
+      </div>
+      <div>
+        <h4>Rendering</h4>
+        <button id="restart_render" class="underline">Restart Render</button>
         <span input="boolean" id="grain" class="">Render Grain</span>
         <span input="number" id="chunk_size" map="i => 2**i" crement="1" min="0" max="8" class="">Render Chunk Size</span>
       </div>
@@ -51,7 +55,7 @@
     <main>
       <div render>
         <canvas id="render"></canvas>
-        <button class="underline">Save</button>
+        <button id="save" class="underline">Save</button>
       </div>
     </main>
     <script src="drawer.js"></script>

@@ -89,13 +89,15 @@ main {
 } [render] {
   display: flex;
   flex-direction: column;
-} [render] button {
+} button {
   background-color: #0000;
   color: #fff;
   border: none;
   padding: 0.5em;
-} [render] button:hover:not(.rendering) {
+} button:hover:not(.rendering) {
   background-size: 100% 4px;
+} aside button {
+  margin: 0.25em 1em;
 }
 
 canvas {

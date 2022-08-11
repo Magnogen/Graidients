@@ -110,6 +110,18 @@ $$('span[input="number"]').forEach(el => {
   el.insertAdjacentElement('afterbegin', mm);
 });
 
+let num_saved = 0;
+let dateObj = new Date();
+let time = `${dateObj.getUTCFullYear()}${dateObj.getUTCMonth()+1}${dateObj.getUTCDate()}`;
+$('#save').on('click', e => {
+  let link = document.createElement('a');
+  link.download = `graidient-${time}_${num_saved++}.png`;
+  link.href = c.toDataURL()
+  link.click();
+});
+let restart_render = false;
+$('#restart_render').on('click', e => restart_render = true)
+
 function init(...Ls) {
   network = [];
   let layers = [...Ls, []];
@@ -216,11 +228,12 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
       chunkY: 0|(i/(c.width/chunk_size))
     }));
     // shuffle(chunkCoords);
-    for (let { chunkX, chunkY } of chunkCoords) {
+    render: for (let { chunkX, chunkY } of chunkCoords) {
       pixels = ctx.getImageData(chunkX*chunk_size, chunkY*chunk_size, chunk_size, chunk_size);
       pixelCoords = [...Array(chunk_size ** 2)].map((e, i) => ({ x: i%chunk_size, y: 0|(i/chunk_size) }));
       shuffle(pixelCoords);
       for (let { x, y } of pixelCoords) {
+        if (restart_render) break render;
         let X = x + chunkX*chunk_size;
         let Y = y + chunkY*chunk_size;
         Y = settings.scale*(Y/(c.height-1) - 0.5);
@@ -248,6 +261,7 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
     }
     
     while (!needs_refresh) await new Promise(requestAnimationFrame);
+    restart_render = false;
     
   } while (true);
 } )()
