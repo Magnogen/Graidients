@@ -20,4 +20,4 @@ Mostly UI stuff, you don't have any control over things otherwise.
   - [ ] Number of hidden layers, and nodes per layer should be changable
   - [ ] A way to change the inputs, like adding a Random value for a dithery effect
   - idk stuff like that
-- [ ] Rendering the image at custom resolutions.
+- [x] Rendering the image at custom resolutions.
