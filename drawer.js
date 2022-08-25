@@ -93,7 +93,7 @@ $$('span[input="number"]').forEach(el => {
     if (el.getAttribute('need') && !settings[el.getAttribute('need')]) return;
     settings[el.id] += crement;
     settings[el.id] = Math.min(max, settings[el.id]);
-    reader.innerHTML = ' = ' + map(settings[el.id]).toFixed(1);
+    reader.innerHTML = ' = ' + map(settings[el.id]);
     needs_refresh = true;
   });
   let mm = document.createElement('span');
@@ -102,7 +102,7 @@ $$('span[input="number"]').forEach(el => {
     if (el.getAttribute('need') && !settings[el.getAttribute('need')]) return;
     settings[el.id] -= crement;
     settings[el.id] = Math.max(min, settings[el.id]);
-    reader.innerHTML = ' = ' + map(settings[el.id]).toFixed(1);
+    reader.innerHTML = ' = ' + map(settings[el.id]);
     needs_refresh = true;
   });
   el.insertAdjacentElement('beforeend', pp);
