@@ -79,13 +79,13 @@ $$('span[input="boolean"]').forEach(el => {
   });
 });
 $$('span[input="number"]').forEach(el => {
-  const map = new Function('return ' + (el.getAttribute('map') ?? 'i => i'))();
+  const map = new Function('return ' + (el.getAttribute('map') ?? 'i => i.toFixed(1)'))();
   const crement = +(el.getAttribute('crement') ?? 0.5);
   const min = +(el.getAttribute('min') ?? -Infinity);
   const max = +(el.getAttribute('max') ?? Infinity);
                            
   let reader = document.createElement('span');
-  reader.innerHTML = ' = ' + map(settings[el.id]).toFixed(1);
+  reader.innerHTML = ' = ' + map(settings[el.id]);
   reader.classList.add('reader');
   let pp = document.createElement('span');
   pp.innerHTML = ' ++';
