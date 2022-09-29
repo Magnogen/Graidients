@@ -23,10 +23,11 @@ class Node {
 let activators = [sin]
 
 let activator_options = {
-  clamp, sigmoid, fold, sin,
-  tan, invSin, valleys, splitHalf, steps,
-  tanh, wrap, value_noise,
-  fractal_sin, fractal_fold, fractal_value_noise
+  clamp, sigmoid, fold, sin, tan, invSin,
+  valleys, splitHalf, steps, tanh, wrap,
+  value_noise, smooth_value_noise, fractal_sin,
+  fractal_fold, fractal_value_noise,
+  fractal_smooth_value_noise
 }
 
 let settings = {
@@ -158,7 +159,7 @@ function valleys(n) {
 }
 
 function value_noise(n) {
-  const scale = 2.5;
+  const scale = 2;
   let N = scale*n - Math.floor(scale*n);
   let x1 = Math.sin(100*settings.noise_seed + Math.floor(scale*n)) * 43758.5453123;
   x1 = x1 - Math.floor(x1);
@@ -166,6 +167,17 @@ function value_noise(n) {
   x2 = x2 - Math.floor(x2);
   return x1*(1-N) + x2*(N);
 }
+function smooth_value_noise(n) {
+  const scale = 2;
+  let N = scale*n - Math.floor(scale*n);
+  let x1 = Math.sin(100*settings.noise_seed + Math.floor(scale*n)) * 43758.5453123;
+  x1 = x1 - Math.floor(x1);
+  let x2 = Math.sin(100*settings.noise_seed + Math.floor(scale*n+1)) * 43758.5453123;
+  x2 = x2 - Math.floor(x2);
+  const f = n => n*n*(3-2*n);
+  return x1*f(1-N) + x2*f(N);
+}
+
 function fractal_func(func) {
   const falloff = 2;
   const shift = 437.585453123;
@@ -184,12 +196,13 @@ function fractal_func(func) {
 }
 function fractal_sin(n) { return fractal_func(sin)(n) }
 function fractal_fold(n) { return fractal_func(fold)(n) }
-function fractal_value_noise(n) { return fractal_func(value_noise)(n) }
+function fractal_value_noise(n) { return fractal_func(value_noise)(n*0.75)*1.75 }
+function fractal_smooth_value_noise(n) { return fractal_func(smooth_value_noise)(n*0.75)*1.75 }
 
 function sin(n) { return 0.5*(Math.sin(Math.PI*(n-0.5))+1); }
 function tan(n) { return 0.5*(Math.tan(n*0.9)+1); }
 function invSin(n) { return 1/Math.pow(sin(n), 0.2) - 1; }
-function tanh(n) { return Math.tanh((n+2) % 2); }
+function tanh(n) { return Math.tanh((n+4) % 2); }
 function splitHalf(n) { return n < 0 ? 0 : 1; }
 function steps(n) { return (0|(8*n))/7; }
 
@@ -265,6 +278,5 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
     
   } while (true);
 } )()
-
 
 
