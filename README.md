@@ -1,5 +1,5 @@
 # Graidients
-##### Make patterns with AI https://magnogen.net/Graidients
+###### Make patterns with AI https://magnogen.net/Graidients
 ## Generate Gradients and Patterns using Neural Networks
 
 This is the source code for a section of my website.
