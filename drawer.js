@@ -53,9 +53,11 @@ c.on('click', e => {
   settings.noise_seed = Math.random();
   init(2, 4, 4, 4, 4, 5);
   needs_refresh = true;
+  $('[helper]').classList.add('hidden');
 });
 on('keydown', e => e.key=='Enter' && c.trigger('click'));
 c.trigger('click');
+$('[helper]').classList.remove('hidden');
 
 $$('span[input="option"]').forEach(el => {
   el.on('click', e => {
@@ -251,6 +253,7 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
         let Y = y + chunkY*chunk_size;
         Y = settings.scale*(Y/(c.height-1) - 0.5);
         X = settings.scale*(X/(c.width-1) - 0.5);
+        let I = 4*(x + y*chunk_size);
         let col = compute(X, Y);
         if (settings.domain_warping) {
           X += settings.warping_amount*col[3];
@@ -258,7 +261,6 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
           col = compute(X, Y);
         }
         const [r, g, b] = col;
-        const I = 4*(x + y*chunk_size);
         pixels.data[I + 0] = r * 255;
         pixels.data[I + 1] = g * 255;
         pixels.data[I + 2] = b * 255;

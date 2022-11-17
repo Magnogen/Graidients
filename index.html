@@ -13,7 +13,7 @@
       <div>
         <h4>General</h4>
         <span input="number" id="scale" class="">Scale</span>
-        <span input="number" id="resolution" map="i => 2**i > 1000 ? (0|(2**i/1000))+'K' : 2**i" crement="1" min="2" class="">Image Resolution</span>
+        <span input="number" id="resolution" map="i => 2**i" crement="1" min="2" class="">Image Resolution</span>
       </div>
       <div>
         <h4>Rendering</h4>
@@ -55,10 +55,12 @@
       </div>
     </aside>
     <main>
+      <h1>Gr<span style="color: #80f080">ai</span>dients</h1>
       <div render>
         <canvas id="render"></canvas>
         <button id="save" class="underline">Save</button>
       </div>
+      <span helper>Click or tap the picture to generate new patterns</span>
     </main>
     <script src="drawer.js"></script>
   </body>

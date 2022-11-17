@@ -4,6 +4,7 @@ body {
   display: flex;
   width: 100vw;
   height: 100vh;
+  font-family: monospace;
   background: #161816;
   color: #fff;
   /* and so the pain begins */
@@ -39,7 +40,6 @@ aside {
   padding: 0.5em 1em;
   flex-grow: 2;
   overflow: auto;
-  font-family: monospace;
   font-size: 1.15em;
 } aside > div {
   padding: 1em 1em;
@@ -98,6 +98,25 @@ main {
   background-size: 100% 4px;
 } aside button {
   margin: 0.25em 1em;
+} main h1 {
+  margin: 0;
+  padding: 0.25em 0em 0.5em 0em;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: min(4em, 7vw);
+} main [helper] {
+  display: block;
+  padding: 0.75em 1.25em;
+  margin: 0.5em 2em 0em 2em;
+  background: #282c28;
+  color: #fff4;
+  text-align: center;
+  white-space: normal;
+  transition: height 0.2s, padding 0.4s ease;
+} main [helper].hidden {
+  height: 0px;
+  padding-block: 0px;
+  overflow: hidden;
 }
 
 canvas {
