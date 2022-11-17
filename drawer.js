@@ -53,11 +53,11 @@ c.on('click', e => {
   settings.noise_seed = Math.random();
   init(2, 4, 4, 4, 4, 5);
   needs_refresh = true;
-  $('[helper]').classList.add('hidden');
+  $('[hint]').classList.add('hidden');
 });
 on('keydown', e => e.key=='Enter' && c.trigger('click'));
 c.trigger('click');
-$('[helper]').classList.remove('hidden');
+$('[hint]').classList.remove('hidden');
 
 $$('span[input="option"]').forEach(el => {
   el.on('click', e => {

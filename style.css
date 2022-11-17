@@ -104,7 +104,7 @@ main {
   text-align: center;
   text-transform: uppercase;
   font-size: min(4em, 7vw);
-} main [helper] {
+} main [hint] {
   display: block;
   padding: 0.75em 1.25em;
   margin: 0.5em 2em 0em 2em;
@@ -113,7 +113,7 @@ main {
   text-align: center;
   white-space: normal;
   transition: height 0.2s, padding 0.4s ease;
-} main [helper].hidden {
+} main [hint].hidden {
   height: 0px;
   padding-block: 0px;
   overflow: hidden;
