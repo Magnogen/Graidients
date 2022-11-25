@@ -4,7 +4,7 @@ body {
   display: flex;
   width: 100vw;
   height: 100vh;
-  font-family: monospace;
+  font-family: "Fira Code", monospace;
   background: #161816;
   color: #fff;
   /* and so the pain begins */
