@@ -1,3 +1,4 @@
+// main stuff
 // jshint esversion: 11
 const $ = query => document.querySelector(query);
 const $$ = query => document.querySelectorAll(query);
