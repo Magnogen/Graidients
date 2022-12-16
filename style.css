@@ -5,8 +5,10 @@ body {
   width: 100vw;
   height: 100vh;
   font-family: "Fira Code", monospace;
+  font-size: 0.75em;
   background: #161816;
   color: #fff;
+  white-space: nowrap;
   /* and so the pain begins */
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -15,12 +17,6 @@ body {
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
-}
-
-@media (max-width:100vh) {
-  body {
-    flex-direction: column-reverse;
-  }
 }
 
 .underline, .hover-underline:hover {
@@ -36,6 +32,7 @@ body {
 
 aside {
   max-width: 48em;
+  min-width: 24em;
   background-color: #323632;
   padding: 0.5em 1em;
   flex-grow: 2;
@@ -100,14 +97,14 @@ main {
   margin: 0.25em 1em;
 } main h1 {
   margin: 0;
-  padding: 0.25em 0em 0.5em 0em;
+  padding: 0.25em 0em 0em 0em;
   text-align: center;
   text-transform: uppercase;
-  font-size: min(4em, 7vw);
+  font-size: min(4em, 6vw);
 } main [hint] {
   display: block;
-  padding: 0.75em 1.25em;
-  margin: 0.5em 2em 0em 2em;
+  padding: 0.5em 1em;
+  margin: 0.5em 1em 0em 1em;
   background: #282c28;
   color: #fff4;
   text-align: center;
@@ -130,3 +127,12 @@ canvas {
   background-size: 20px 20px;
   background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 }
+
+@media (max-width: 110vh) {
+  body { flex-direction: column-reverse; }
+  aside { max-width: 100%; }
+  canvas { width: auto; height: 25vh; }
+}
+
+
+
