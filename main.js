@@ -1,35 +1,10 @@
 // main stuff
 // jshint esversion: 11
-const $ = query => document.querySelector(query);
-const $$ = query => document.querySelectorAll(query);
-EventTarget.prototype.on = function (...args) { return this.addEventListener(...args) };
-EventTarget.prototype.trigger = function (event) { return this.dispatchEvent(new Event(event)) };
-
-
 const c = $('canvas#render');
 const ctx = c.getContext('2d');
 c.width = c.height = 256;
 
-let network = [];
-
-class Node {
-  constructor(num_weights) {
-    this.weights = [...Array(num_weights)].map(e => 2*Math.random()-1);
-    this.bias = 2*Math.random()-1;
-    this.value = 0;
-    this.acfunc = activators[0|(Math.random()*activators.length)];
-  }
-}
-
-let activators = [sin]
-
-let activator_options = {
-  clamp, sigmoid, fold, sin, tan, invSin,
-  valleys, splitHalf, steps, tanh, wrap,
-  value_noise, smooth_value_noise, fractal_sin,
-  fractal_fold, fractal_value_noise,
-  fractal_smooth_value_noise
-}
+let network = makeNetwork();
 
 let settings = {
   scale: 3,
@@ -52,7 +27,7 @@ function resize(size) {
 c.on('click', e => {
   if (activators.length == 0) return;
   settings.noise_seed = Math.random();
-  init(2, 4, 4, 4, 4, 5);
+  network.init(2, 4, 4, 4, 4, 5);
   needs_refresh = true;
   $('[hint]').classList.add('hidden');
 });
@@ -124,117 +99,17 @@ $('#save').on('click', e => {
   link.click();
 });
 let restart_render = false;
-$('#restart_render').on('click', e => restart_render = true)
+$('#restart_render').on('click', e => restart_render = true);
 
-function init(...Ls) {
-  network = [];
-  let layers = [...Ls, []];
-  for (let l = 0; l < layers.length-1; l++) {
-    let layer = [];
-    for (let n = 0; n < layers[l]; n++) {
-      const node = new Node(layers[l+1]);
-      layer.push(node);
-    }
-    network.push(layer);
-  }
-}
-
-function clamp(x) { return x < 0 ? 0 : x > 1 ? 1 : x }
-function sigmoid(n) { return 1 / (1 + Math.exp(-n * 8)); }
-
-function wrap(x) {
-  let X = x;
-  while (X < 0) X++;
-  while (X > 1) X--;
-  return X;
-}
-function fold(n) {
-  let N = (n<0 ? -n : n)%2;
-  if (N > 1) return 2 - N;
-  return N;
-}
-function valleys(n) {
-  let N = n+1;
-  while (N < -1) N += 2;
-  while (N > 1) N -= 2;
-  N = (n<0 ? -n : n);
-  return Math.pow(N, 2/3);
-}
-
-function value_noise(n) {
-  const scale = 2;
-  let N = scale*n - Math.floor(scale*n);
-  let x1 = Math.sin(100*settings.noise_seed + Math.floor(scale*n)) * 43758.5453123;
-  x1 = x1 - Math.floor(x1);
-  let x2 = Math.sin(100*settings.noise_seed + Math.floor(scale*n+1)) * 43758.5453123;
-  x2 = x2 - Math.floor(x2);
-  return x1*(1-N) + x2*(N);
-}
-function smooth_value_noise(n) {
-  const scale = 2;
-  let N = scale*n - Math.floor(scale*n);
-  let x1 = Math.sin(100*settings.noise_seed + Math.floor(scale*n)) * 43758.5453123;
-  x1 = x1 - Math.floor(x1);
-  let x2 = Math.sin(100*settings.noise_seed + Math.floor(scale*n+1)) * 43758.5453123;
-  x2 = x2 - Math.floor(x2);
-  const f = n => n*n*(3-2*n);
-  return x1*f(1-N) + x2*f(N);
-}
-
-function fractal_func(func) {
-  const falloff = 2;
-  const shift = 437.585453123;
-  const octaves = 5;
-  return function(n) {
-    let value = 0;
-    let amplitude = 1/falloff;
-    let x = n;
-    for (let i = 0; i < octaves; ++i) {
-      value += amplitude * func(x);
-      x = falloff * x + shift;
-      amplitude /= falloff;
-    }
-    return value;
-  }
-}
-function fractal_sin(n) { return fractal_func(sin)(n) }
-function fractal_fold(n) { return fractal_func(fold)(n) }
-function fractal_value_noise(n) { return fractal_func(value_noise)(n*0.75)*1.75 }
-function fractal_smooth_value_noise(n) { return fractal_func(smooth_value_noise)(n*0.75)*1.75 }
-
-function sin(n) { return 0.5*(Math.sin(Math.PI*(n-0.5))+1); }
-function tan(n) { return 0.5*(Math.tan(n*0.9)+1); }
-function invSin(n) { return 1/Math.pow(sin(n), 0.2) - 1; }
-function tanh(n) { return Math.tanh((n+4) % 2); }
-function splitHalf(n) { return n < 0 ? 0 : 1; }
-function steps(n) { return (0|(8*n))/7; }
-
-function compute(...inputs) {
-  for (let i in inputs)
-    network[0][i].value = inputs[i];
-  for (let l = 1; l < network.length; l++)
-  for (let n = 0; n < network[l].length; n++) {
-    let value = network[l][n].bias;
-    for (let N = 0; N < network[l-1].length; N++)
-      value += network[l-1][N].value * network[l-1][N].weights[n];
-    network[l][n].value = network[l][n].acfunc(value);
-  }
-  return network[network.length-1].map(e => e.value);
-}
-
-function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
-  c=a.length;while(c)b=Math.random()*c--|0,d=a[c],a[c]=a[b],a[b]=d
-}
-
-( async () => {
+;(async () => {
   let last = 0;
   let pixels, pixelCoords;
   let chunks, chunkCoords, chunk_size;
   
-  let i = 0|(Math.random()*network.length);
-  let j = 0|(Math.random()*network[i].length);
-  let k = 0|(Math.random()*network[i][j].weights.length);
-  let d = Math.random() < 0.5 ? 1 : -1;
+  let i = 0|rand(network.brain.length);
+  let j = 0|rand(network.brain[i].length);
+  let k = 0|rand(network.brain[i][j].weights.length);
+  let d = rand() < 0.5 ? 1 : -1;
   do {
     needs_refresh = false;
     chunk_size = Math.min(c.width, 2**settings.chunk_size);
@@ -255,7 +130,7 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
         Y = settings.scale*(Y/(c.height-1) - 0.5);
         X = settings.scale*(X/(c.width-1) - 0.5);
         let I = 4*(x + y*chunk_size);
-        let col = compute(X, Y);
+        let col = network.compute(X, Y);
         if (settings.domain_warping) {
           X += settings.warping_amount*col[3];
           Y += settings.warping_amount*col[4];
@@ -280,6 +155,6 @@ function shuffle(a,b,c,d){//array,placeholder,placeholder,placeholder
     restart_render = false;
     
   } while (true);
-} )()
+})()
 
 
