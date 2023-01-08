@@ -134,7 +134,7 @@ $('#restart_render').on('click', e => restart_render = true);
         if (settings.domain_warping) {
           X += settings.warping_amount*col[3];
           Y += settings.warping_amount*col[4];
-          col = compute(X, Y);
+          col = network.compute(X, Y);
         }
         const [r, g, b] = col;
         pixels.data[I + 0] = r * 255;
